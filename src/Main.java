@@ -88,7 +88,7 @@ public class Main {
                         System.out.println("You are already employed.");
                         eCount++;
                         if(eCount >= 3){
-                            System.out.println("You're fired.");
+                            System.out.println("\n You're fired.");
                             You.getFired();
                             eCount = 0;
                         }
