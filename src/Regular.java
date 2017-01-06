@@ -1,21 +1,13 @@
-/**
- * Created by Nilxam on 1/4/17.
- */
+
+import java.util.*;
 public class Regular extends Customer{
-    public final double[] rPrices = {65, 10, 1, -1, 25};
-    public Regular(int S, double w){
-        super(S,w);
+    public Regular(int S, String N,double w){
+        super(S,N,w);
         System.arraycopy(rPrices,0,prices,0,prices.length);
-        /*membership = 65;
-        classes = 10;
-        retail = 1;
-        aquatics = -1;
-        trainer = 25;*/
     }
-    public void getMembership(){
-
-    }
-    public void getEmployed(){
-
+    public void aquatics(double aquaticLength){
+        if(prices[3]>0){
+            super.aquatics(aquaticLength);
+        }
     }
 }

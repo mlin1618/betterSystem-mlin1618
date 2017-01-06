@@ -1,50 +1,115 @@
-/**
- * Created by Nilxam on 1/4/17.
- */
+
 import java.util.*;
 public abstract class Customer {
-    public Customer(int S, double w){
+    public Customer(int S, String N, double w){
+        name = N;
         SSN = S;
         weight = w;
+        initialWeight = w;
     }
-    //public abstract void getMembership();
-    //public abstract void getEmployed();
-    private int SSN;
-    private double weight;
-    private int visits;
-    private ArrayList<Integer> visitLengths = new ArrayList<Integer>();
-
-   /* public String[] names = {"Membership", "Classes", "Retail", "Aquatics", "Personal Trainer"};
-    public double[] prices = new double[5];
-    /*public double membership;
-    public double classes;
-    public double retail;
-    public double aquatics;
-    public double trainer;*/
-
-    //new plan: there is only one class
-    //membership and employment are PROPERTIES of a customer, not classes of customers
-    /*
-    so here's the idea:
-    you make a generic Customer class, like we have now
-    make a method to getMembership, another to getEmployed
-    if a person starts out as an employee, just do getEmployed right off the bat, etc.
-    within each, take the best savings between the new ones and the ones they have (so use math.min)
-
-    then make methods visitGym() (records in variables visits and vistLength),
-    purchase (get to buy something from retail)
-    printBill (prints out what you've paid for, your weight, and your visits, and your current status)
-     */
     public void getMembership(){
-
+        double pay = prices[0];
+        if(pay > 0){
+            //Adds to bill
+            bill.add("MEMBERSHIP\t"+ (String.valueOf(pay)));
+            paid.add(pay);
+            //makes sure that employees get the best of both if they upgrade
+            for(int i = 0; i < prices.length; i++) {
+                if (mPrices[i] < prices[i]) {
+                    prices[i] = mPrices[i];
+                }
+            }
+        }
+    }
+    public void loseMembership(){
+        if(employed){
+            System.arraycopy(ePrices, 0, prices, 0, prices.length); //is employee
+        }
+        else{
+            System.arraycopy(rPrices, 0, prices, 0, prices.length);
+        }
     }
     public void getEmployed(){
-
+        bill.add("EMPLOYEE\t0");
+        for(int i = 0; i < prices.length; i++) {
+            if (mPrices[i] < prices[i]) {
+                prices[i] = mPrices[i];
+            }
+        }
+        employed = true;
     }
-    public void purchase(){
-
+    public void getFired(){
+        if(prices[0] < 0){
+            System.arraycopy(mPrices, 0, prices, 0, prices.length); //is member
+        }
+        else{
+            System.arraycopy(rPrices, 0, prices, 0, prices.length);
+        }
+    }
+    public void purchaseRetail(double salePrice){
+        double actualPrice = salePrice * (1 + prices[2]);
+        bill.add("RETAIL\t" + (String.valueOf(actualPrice)));
+        paid.add(actualPrice);
+        visits++;
+        visitLengths.add(10.0);
+    }
+    public void takeClass(double classLength){//classLength is in hours
+        bill.add("CLASS\t" + (String.valueOf(prices[1])));
+        paid.add(prices[1]);
+        visits++;
+        visitLengths.add(classLength);
+        weight -= .11*classLength; //assuming approx. 400 calories burned in 1 hour of generic gym class, 400/3500=.11
+    }
+    public void aquatics(double aquaticLength){ //aquaticLength is in hours (not necessarily whole number)
+        bill.add("AQUATICS\t" + (String.valueOf(prices[3])));
+        paid.add(prices[3]);
+        visits++;
+        visitLengths.add(aquaticLength);
+        weight -= .17 * aquaticLength; //1 hour of swimming burns around 600 calories, 3500 calories loses a pound, 600/3500=.17
+    }
+    public void personalTrainer(){
+        bill.add("PESRONAL TRAINER\t" + (String.valueOf(prices[4])));
+        paid.add(prices[4]);
+        visits++;
+        visitLengths.add(60.0);
+        weight -= 0.07; //1 hour burns around 250 calories, 250/3500 = 0.07
     }
     public void printBill(){
-        
+        double total = 0;
+        for(int i = 0; i < paid.size(); i++){
+            total += paid.get(i);
+        }
+        bill.add("\n TOTAL\t" + (String.valueOf(total)));
+        for(int i = 0; i < bill.size(); i++){
+            System.out.println(bill.get(i));
+        }
     }
+    public void printVisits(){
+        double total = 0;
+        for(int i = 0; i < visitLengths.size(); i++){
+            total+=visitLengths.get(i);
+            System.out.println(visitLengths.get(i));
+        }
+        System.out.println("TOTAL NUMBER: "+ visits);
+        System.out.println("TOTAL TIME: " + total);
+    }
+    public double weightLost(){
+        return weight - initialWeight;
+    }
+    public String name;
+    public int SSN;
+    public final double initialWeight;
+    public double weight; //in pounds
+    public int visits;
+    public boolean employed;
+    public ArrayList<Double> visitLengths = new ArrayList<Double>();
+    public ArrayList<String> bill = new ArrayList<String>();
+    public ArrayList<Double> paid = new ArrayList<Double>();
+    public String[] items = {"Membership", "Classes", "Retail", "Aquatics", "Personal Trainer"};
+
+    public double[] prices = new double[5]; //current prices for customer
+    //constants, -1 means not available, prices[2] is the percent off
+    public final double[] mPrices = {-1, 8, -0.2, 10, 20};
+    public final double[] ePrices = {1,  3, -0.1,  7, 15};
+    public final double[] rPrices = {65, 10, 0, -1, 25};
 }
