@@ -5,9 +5,11 @@ public class Regular extends Customer{
         super(S,N,w);
         System.arraycopy(rPrices,0,prices,0,prices.length);
     }
-    public void aquatics(double aquaticLength){
+    public boolean aquatics(double aquaticLength){
         if(prices[3]>0){
             super.aquatics(aquaticLength);
+            return true;
         }
+        return false;
     }
 }

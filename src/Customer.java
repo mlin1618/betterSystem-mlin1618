@@ -1,13 +1,13 @@
 
 import java.util.*;
-public abstract class Customer {
+public class Customer {
     public Customer(int S, String N, double w){
         name = N;
         SSN = S;
         weight = w;
         initialWeight = w;
     }
-    public void getMembership(){
+    public boolean getMembership(){
         double pay = prices[0];
         if(pay > 0){
             //Adds to bill
@@ -19,31 +19,53 @@ public abstract class Customer {
                     prices[i] = mPrices[i];
                 }
             }
+            return true;
         }
+        return false;
     }
-    public void loseMembership(){
-        if(employed){
-            System.arraycopy(ePrices, 0, prices, 0, prices.length); //is employee
-        }
-        else{
-            System.arraycopy(rPrices, 0, prices, 0, prices.length);
-        }
-    }
-    public void getEmployed(){
-        bill.add("EMPLOYEE\t0");
-        for(int i = 0; i < prices.length; i++) {
-            if (mPrices[i] < prices[i]) {
-                prices[i] = mPrices[i];
+    public boolean loseMembership(){
+        if(prices[1] == -1){
+            if(employed){
+                System.arraycopy(ePrices, 0, prices, 0, prices.length); //is employee
             }
-        }
-        employed = true;
-    }
-    public void getFired(){
-        if(prices[0] < 0){
-            System.arraycopy(mPrices, 0, prices, 0, prices.length); //is member
+            else{
+                System.arraycopy(rPrices, 0, prices, 0, prices.length);
+            }
+            return true;
         }
         else{
-            System.arraycopy(rPrices, 0, prices, 0, prices.length);
+            return false;
+        }
+    }
+    public boolean getEmployed(){
+        if(prices[1] != ePrices[1]) {
+            bill.add("EMPLOYEE\t0");
+            for (int i = 0; i < prices.length; i++) {
+                if (mPrices[i] < prices[i]) {
+                    prices[i] = ePrices[i];
+                }
+            }
+            if(prices[0] != -1){
+                prices[3] = ePrices[3];
+            }
+            employed = true;
+            return true;
+        }
+        return false;
+    }
+    public boolean getFired(){
+        if(employed) {
+            if (prices[0] < 0) {
+                System.arraycopy(mPrices, 0, prices, 0, prices.length); //is member
+                employed = false;
+            } else {
+                System.arraycopy(rPrices, 0, prices, 0, prices.length);
+                employed = false;
+            }
+            return true;
+        }
+        else{
+            return false;
         }
     }
     public void purchaseRetail(double salePrice){
@@ -60,12 +82,13 @@ public abstract class Customer {
         visitLengths.add(classLength);
         weight -= .11*classLength; //assuming approx. 400 calories burned in 1 hour of generic gym class, 400/3500=.11
     }
-    public void aquatics(double aquaticLength){ //aquaticLength is in hours (not necessarily whole number)
+    public boolean aquatics(double aquaticLength){ //aquaticLength is in hours (not necessarily whole number)
         bill.add("AQUATICS\t" + (String.valueOf(prices[3])));
         paid.add(prices[3]);
         visits++;
         visitLengths.add(aquaticLength);
         weight -= .17 * aquaticLength; //1 hour of swimming burns around 600 calories, 3500 calories loses a pound, 600/3500=.17
+        return true;
     }
     public void personalTrainer(){
         bill.add("PESRONAL TRAINER\t" + (String.valueOf(prices[4])));
@@ -94,7 +117,7 @@ public abstract class Customer {
         System.out.println("TOTAL TIME: " + total);
     }
     public double weightLost(){
-        return weight - initialWeight;
+        return initialWeight - weight;
     }
     public String name;
     public int SSN;
