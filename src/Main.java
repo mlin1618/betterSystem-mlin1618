@@ -47,7 +47,7 @@ public class Main {
                         System.out.println("You are already a member.");
                         mCount++;
                         if(mCount >= 3){
-                            System.out.println("Your membership has been revoked for trying to screw with the system.");
+                            System.out.println("Your membership has been revoked for trying to repeatedly screw with the system.");
                             You.loseMembership();
                             mCount = 0;
                         }
