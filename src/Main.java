@@ -33,15 +33,15 @@ public class Main {
                 System.out.println("You had one job. 1, 2, or 3. Try again.");
             }
         }
-        while(true){
+        loop1:while(true){
             System.out.println("What would you like to do?");
             System.out.println("(1) Get Membership \n (2) Class \n (3) Retail \n (4) Aquatics \n (5) Personal Trainer \n (6) Become Employee \n (7) Print Bill \n (8) Print Visit Record \n (9) Print Weight Data  \n (10) Exit");
             String todo = sc.nextLine();
             switch(todo){
                 case "1":
                     if(You.prices[0]>0){
-                        You.getMembership();
                         System.out.println("You spent " + You.prices[0] + " to become a member.");
+                        You.getMembership();
                     }
                     else{
                         System.out.println("You are already a member.");
@@ -110,6 +110,7 @@ public class Main {
                     break;
                 case "10":
                     System.out.println("Come again!");
+                    break loop1;
                 default:
                     System.out.println("Invalid, try again.");
                     break;
